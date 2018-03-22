@@ -20,6 +20,7 @@ namespace SampleMVCApp.Controllers
             return View();
         }
 
+        [Authorize(Policy = "CLAIM.HOME.XXX")]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
