@@ -1,0 +1,27 @@
+﻿@model List<MenuViewModel>
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<ul>
+    @foreach (MenuViewModel menu in Model)
+    {
+        <li>
+            <a href="@menu.Url"> @menu.Name </a>
+            @if (menu.Children != null && menu.Children.Any())
+            {
+                <ul>
+                    @foreach (MenuViewModel secMenu in menu.Children)
+                    {
+                        <li>
+                            <a href="@secMenu.Url"> @secMenu.Name </a>
+                        </li>
+                    }
+                </ul>
+
+            }
+        </li>
+
+    }
+</ul>
+

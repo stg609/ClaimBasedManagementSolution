@@ -6,6 +6,7 @@ namespace Constants
 {
     public class GeneralConstants
     {
-        public const string DelimeterDot = ".";
+        public const char DelimeterDot = '.';
+        public const char DelimeterSemicolon = ';';
     }
 }

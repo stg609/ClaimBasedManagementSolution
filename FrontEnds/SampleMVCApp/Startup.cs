@@ -1,13 +1,27 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using Constants;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
 using Infra;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using SampleMVCApp.Domain;
+using SampleMVCApp.Infra;
+using SampleMVCApp.Services;
 
 namespace SampleMVCApp
 {
@@ -21,14 +35,20 @@ namespace SampleMVCApp
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(options =>
+             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), op => op.MigrationsAssembly("SampleMVCApp.Infra")));
+
             services.AddMvc();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, ClaimAuthorizationHandler>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+            services.AddScoped<DbContext, ApplicationDbContext>();
 
             services.AddAuthentication(options =>
             {
@@ -47,11 +67,16 @@ namespace SampleMVCApp
                     options.ResponseType = OpenIdConnectResponseType.CodeIdToken; //"code id_token";
 
                     options.GetClaimsFromUserInfoEndpoint = true;
+
+                    //Given to the hybrid flow, we need to map custom claims to id token, otherwise only the common claims will be included in the id token.
                     options.ClaimActions.MapJsonKey(ClaimConstants.PermissionClaimType, ClaimConstants.PermissionClaimType);
 
                     options.SaveTokens = true;
                     options.Scope.Add("offline_access");
                 });
+
+            //Return our container, reference our class that holds our registrations. 
+            return new Container().WithDependencyInjectionAdapter(services).ConfigureServiceProvider<CompositionRoot>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -69,8 +94,24 @@ namespace SampleMVCApp
             app.UseAuthentication();
 
             app.UseStaticFiles();
-
             app.UseMvcWithDefaultRoute();
+            //IRouter routeCollection = null;
+            //app.UseMvc(routes =>
+            //{
+            //    routes.MapRoute(
+            //      name: "default",
+            //      template: "{controller=Home}/{action=Index}/{id?}");
+
+            //    routeCollection = routes.Build();
+            //});
+            //RouteData data = new RouteData();
+            //data.Routers.Add(routeCollection);
+
+            //ActionContext context = new ActionContext(new DefaultHttpContext(),data,
+            //    new ActionDescriptor() { });
+            ////context.RouteData.Routers = new List<IRouter> { routeCollection };
+            //var url = urlHelper.GetUrlHelper(context);
+            ////menuService.GenerateMenusByControllerAction();
         }
     }
 }
