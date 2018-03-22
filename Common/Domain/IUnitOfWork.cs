@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-namespace SampleMVCApp.Domain
+namespace Domain
 {
     public interface IUnitOfWork : IDisposable
     {

@@ -28,7 +28,7 @@ namespace IdServer.Services
                     ClientId = "mvc",
                     ClientName = "Sample MVC Client",
                     AllowedGrantTypes = GrantTypes.HybridAndClientCredentials,
-
+                     
                     //
                     //AlwaysIncludeUserClaimsInIdToken = true,
 

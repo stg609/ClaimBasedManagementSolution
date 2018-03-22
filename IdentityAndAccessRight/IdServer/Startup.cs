@@ -1,4 +1,7 @@
-﻿using IdServer.Infra;
+﻿using System;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
+using IdServer.Infra;
 using IdServer.Models;
 using IdServer.Services;
 using Infra;
@@ -22,7 +25,7 @@ namespace IdServer
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), op => op.MigrationsAssembly("IdServer.Infra")));
@@ -37,6 +40,7 @@ namespace IdServer
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddScoped<IDBInitializer, DBInitializer>();
+            services.AddScoped<DbContext, ApplicationDbContext>();
 
             services.AddMvc();
 
@@ -47,6 +51,9 @@ namespace IdServer
                 .AddInMemoryClients(Config.GetClients())
                 .AddAspNetIdentity<ApplicationUser>()
                 .AddProfileService<IdentityProfileService>();
+
+            //Return our container, reference our class that holds our registrations. 
+            return new Container().WithDependencyInjectionAdapter(services).ConfigureServiceProvider<CompositionRoot>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,10 +77,15 @@ namespace IdServer
 
             app.UseMvc(routes =>
             {
+                //routes.MapRoute(
+                //    name: "areas",
+                //    template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
 
             dBInitializer.Initialize().Wait();
         }

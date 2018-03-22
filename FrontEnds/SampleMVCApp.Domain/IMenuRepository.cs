@@ -4,7 +4,7 @@ using System.Text;
 
 namespace SampleMVCApp.Domain
 {
-    public interface IMenuRepository : IRepository<MenuDTO, string>
-    {
-    }
+    //public interface IMenuRepository : IRepository<MenuDTO, string>
+    //{
+    //}
 }

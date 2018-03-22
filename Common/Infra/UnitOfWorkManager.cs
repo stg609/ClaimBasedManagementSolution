@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Domain;
 using DryIoc;
-using SampleMVCApp.Domain;
 
-namespace SampleMVCApp.Infra
+namespace Infra
 {
     public class UnitOfWorkManager : IUnitOfWorkManager
     {

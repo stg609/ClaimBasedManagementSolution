@@ -24,4 +24,9 @@
     <ProjectReference Include="..\IdServer.Infra\IdServer.Infra.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\API\Data\" />
+    <Folder Include="Areas\API\Views\" />
+  </ItemGroup>
+
 </Project>

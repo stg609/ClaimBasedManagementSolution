@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Domain;
 using DryIoc;
 using Microsoft.EntityFrameworkCore;
-using SampleMVCApp.Domain;
 
-namespace SampleMVCApp.Infra
+namespace Infra
 {
     public class UnitOfWork : IUnitOfWork
     {

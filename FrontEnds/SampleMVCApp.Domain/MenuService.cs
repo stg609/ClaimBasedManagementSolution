@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Constants;
+using Domain;
 using Infra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

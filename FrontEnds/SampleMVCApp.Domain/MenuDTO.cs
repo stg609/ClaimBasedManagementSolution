@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Domain;
 
 namespace SampleMVCApp.Domain
 {
-    public class MenuDTO
+    public class MenuDTO : BaseEntity<int>
     {
-        public int Key { get; set; }
         public string Name { get; set; }
         public string Url { get; set; }
         public string Claims { get; set; }

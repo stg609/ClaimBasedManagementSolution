@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace SampleMVCApp.Domain
+namespace Domain
 {
     public interface IRepository<TEntity,TKey> 
          where TEntity : class

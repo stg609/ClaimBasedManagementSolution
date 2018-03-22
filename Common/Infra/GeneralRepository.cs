@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Domain;
 using Microsoft.EntityFrameworkCore;
-using SampleMVCApp.Domain;
 
-namespace SampleMVCApp.Infra
+namespace Infra
 {
     public class GeneralRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         where TEntity : class

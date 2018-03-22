@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Constants\Constants.csproj" />
+    <ProjectReference Include="..\IdServer.Domain\IdServer.Domain.csproj" />
   </ItemGroup>
 
 </Project>
