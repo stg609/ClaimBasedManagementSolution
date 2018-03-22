@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
+using Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace SampleAPI
 {
     public class Startup
     {
+       private const string IDENTITY = "api1";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,12 +31,14 @@ namespace SampleAPI
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
 
-                    options.ApiName = "api1";
+                    options.ApiName = IDENTITY;
                 });
+
+            services.AddScoped<HttpClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HttpClient client)
         {
             if (env.IsDevelopment())
             {
@@ -46,6 +46,12 @@ namespace SampleAPI
             }
             app.UseAuthentication();
             app.UseMvc();
+
+            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", IDENTITY);
+            if (!isSuccess)
+            {
+                //TODO log it
+            }
         }
     }
 }

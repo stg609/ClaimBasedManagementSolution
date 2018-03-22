@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using Constants;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
@@ -9,17 +9,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using SampleMVCApp.Domain;
 using SampleMVCApp.Infra;
 using SampleMVCApp.Services;
 
@@ -27,6 +21,8 @@ namespace SampleMVCApp
 {
     public class Startup
     {
+        const string IDENTITY = "mvc";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -49,6 +45,7 @@ namespace SampleMVCApp
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
             services.AddScoped<DbContext, ApplicationDbContext>();
+            services.AddScoped<HttpClient>();
 
             services.AddAuthentication(options =>
             {
@@ -61,7 +58,7 @@ namespace SampleMVCApp
                     options.SignInScheme = "Cookies";
 
                     options.Authority = "http://localhost:5000";
-                    options.ClientId = "mvc";
+                    options.ClientId = IDENTITY;
                     options.ClientSecret = "secret";
                     options.RequireHttpsMetadata = false;
                     options.ResponseType = OpenIdConnectResponseType.CodeIdToken; //"code id_token";
@@ -80,7 +77,7 @@ namespace SampleMVCApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, HttpClient client)
         {
             if (env.IsDevelopment())
             {
@@ -112,6 +109,12 @@ namespace SampleMVCApp
             ////context.RouteData.Routers = new List<IRouter> { routeCollection };
             //var url = urlHelper.GetUrlHelper(context);
             ////menuService.GenerateMenusByControllerAction();
+
+            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", IDENTITY);
+            if(!isSuccess)
+            {
+                //TODO log it
+            }
         }
     }
 }

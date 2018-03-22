@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 using Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Infra
 {
@@ -111,6 +114,26 @@ namespace Infra
             //await _dbContext.SaveChangesAsync();
 
             return results;
+        }
+
+        public static bool SendClaimToIdentityServer(HttpClient httpClient, string idServerClaimAPIUrl, string identity)
+        {
+            var claims = ClaimsAnalyzer.GetAllClaimsOfControllers(Assembly.GetExecutingAssembly());
+            if (claims == null || !claims.Any())
+            {
+                return true;
+            }
+
+            var body = JsonConvert.SerializeObject(new
+            {
+                Identity = identity,
+                Claims = from claim in claims
+                         select new { Type = claim.Type, Value = claim.Value }
+            });
+            var stringContent = new StringContent(body, Encoding.UTF8, "application/json");
+
+            var result = httpClient.PostAsync(idServerClaimAPIUrl, stringContent).Result;
+            return result.IsSuccessStatusCode;
         }
     }
 
