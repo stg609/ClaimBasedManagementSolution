@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Domain
+namespace Common.Domain
 {
     public class BaseEntity<TKey>
     {

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain;
+﻿using Common.Domain;
+using Common.Infra;
 using DryIoc;
 using IdServer.Domain;
-using Infra;
 
 namespace IdServer.Services
 {

@@ -1,8 +1,8 @@
-﻿using Domain;
+﻿using Common.Domain;
 using DryIoc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infra
+namespace Common.Infra
 {
     public class UnitOfWork : IUnitOfWork
     {

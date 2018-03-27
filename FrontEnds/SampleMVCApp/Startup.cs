@@ -4,7 +4,7 @@ using System.Net.Http;
 using Constants;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
-using Infra;
+using Common.Infra;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;

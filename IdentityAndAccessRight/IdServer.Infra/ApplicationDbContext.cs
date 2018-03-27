@@ -1,5 +1,4 @@
 ﻿using IdServer.Domain;
-using IdServer.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

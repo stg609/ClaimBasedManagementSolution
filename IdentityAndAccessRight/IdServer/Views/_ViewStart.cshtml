@@ -1,3 +1,5 @@
-﻿@{
-    Layout = "_Layout";
+﻿@inject Microsoft.Extensions.Configuration.IConfiguration configuration
+
+@{
+    Layout = "_Layout_" + configuration["Theme"];
 }

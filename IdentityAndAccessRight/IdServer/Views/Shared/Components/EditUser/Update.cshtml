@@ -1,0 +1,48 @@
+﻿@model UpdateUserViewModel
+@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div asp-validation-summary="All" class="text-danger"></div>
+<div class="form-group">
+    <label asp-for="Email"></label>
+    <input asp-for="Email" class="form-control" readonly="readonly" />
+</div>
+<div class="form-group">
+    <label asp-for="UserName"></label>
+    <input asp-for="UserName" class="form-control" readonly="readonly" />
+</div>
+<div class="form-group">
+    <label asp-for="Password"></label>
+    <div class="input-group">
+        <input asp-for="Password" class="form-control pwd" type="password" autocomplete="new-password" autofocus/>
+        <span class="input-group-btn">
+            <button class="btn btn-default reveal" type="button"><i class="glyphicon glyphicon-eye-open"></i></button>
+        </span>
+    </div>
+    <span asp-validation-for="Password" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Roles"></label>
+    <div class="input-group">
+        @for (int i = 0; i < Model.Roles.Count; i++)
+        {
+            <input type="checkbox" asp-for="@Model.Roles[i].Checked" />
+            <input type="hidden" asp-for="@Model.Roles[i].Text" />
+            <input type="hidden" asp-for="@Model.Roles[i].Value" />
+            <label asp-for="@Model.Roles[i].Checked">@Model.Roles[i].Text</label>
+        }
+    </div>
+</div>
+<div class="form-group">
+    <label asp-for="Claims"></label>
+    <div class="input-group">
+        @for (int i = 0; i < Model.Claims?.Count; i++)
+        {
+            <input type="checkbox" asp-for="@Model.Claims[i].Checked" />
+            <input type="hidden" asp-for="@Model.Claims[i].Text" />
+            <input type="hidden" asp-for="@Model.Claims[i].Value" />
+            <label asp-for="@Model.Claims[i].Checked">@Model.Claims[i].Text</label>
+        }
+    </div>
+</div>

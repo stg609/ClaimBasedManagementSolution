@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
-namespace Infra
+namespace Common.Infra
 {
     public static class ClaimsAnalyzer
     {
@@ -51,7 +51,7 @@ namespace Infra
         {
             if (assembly == null)
             {
-                return Extensions.Empty<List<Claim>>();
+                return new List<Claim>();
             }
             
             List<Claim> results = new List<Claim>();

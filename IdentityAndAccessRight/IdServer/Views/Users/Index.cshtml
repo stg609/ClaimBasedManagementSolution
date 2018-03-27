@@ -1,0 +1,219 @@
+﻿@model EditUserViewModel
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>User Manager</h2>
+
+<div class="btn-toolbar" role="toolbar" aria-label="User Manager toolbar">
+    <div class="btn-group" role="group" aria-label="User Manager tools">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAddUser">Add User</button>
+    </div>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">UserName</th>
+            <th scope="col">Email</th>
+            <th scope="col">Email Confirmed</th>
+            <th scope="col">Roles</th>
+            <th scope="col">Additional Claims</th>
+            <th scope="col">IsLocked</th>
+            <th scope="col">Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (UserViewModel user in ViewBag.Users)
+        {
+            <tr>
+                <th>
+                    @user.UserName
+                </th>
+                <th>
+                    @user.Email
+                </th>
+                <td>
+                    @user.EmailConfirmed
+                </td>
+                <td>
+                    @foreach (var role in user.Roles.EmptyListIfEmpty())
+                    {
+                        <span>@role</span>
+                    }
+                </td>
+                <td>
+                    @foreach (var claim in user.Claims.EmptyListIfEmpty())
+                    {
+                        <span>@claim</span>
+                    }
+                </td>
+                <td>
+                    <span>@user.Locked</span>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalEditUser" data-email="@user.Email">Edit</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@(user.Locked?"modalUnLock":"modalLock")" data-email="@user.Email" disabled="@(user.Email == User.Identity.Name)">@(user.Locked ? "UnLock" : "Lock")</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form method="post" asp-action="Create" autocomplete="off">
+    <div class="modal fade" id="modalAddUser" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Add New User</h4>
+                </div>
+                <div class="modal-body">
+                    <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnCreateUser" type="submit" class="btn btn-primary">Create</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-action="Edit" method="post" autocomplete="off">
+    <div class="modal fade" id="modalEditUser" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Edit User</h4>
+                </div>
+                <div class="modal-body">
+                    <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
+                </div>
+                <div class="modal-footer">
+                    <button id="btnUpdateUser" type="submit" class="btn btn-primary">Update</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-action="Lock" method="post">
+    <div class="modal fade" id="modalLock" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>Lock</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Email" />
+                    Are you sure to take this action?
+                </div>
+                <div class="modal-footer">
+                    <button id="btnLock" type="submit" class="btn btn-primary">Lock</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form asp-action="UnLock" method="post">
+    <div class="modal fade" id="modalUnLock" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4>UnLock</h4>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="Email" />
+                    Are you sure to take this action?
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">UnLock</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section scripts
+    {
+    @*Enable Client Side Validation*@
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    <script>
+        $(document).on('shown.bs.modal', '.modal', function () {
+            $(this).find('[autofocus]').focus();
+        });
+
+        $('#modalEditUser').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var email = button.data('email');
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), { email: email }, function (data) {
+                $("#modalEditUser .modal-body").html(data);
+
+                var form = $("#modalAddUser").closest("form");
+                $.validator.unobtrusive.parse(form);
+
+                $(".reveal").on('click', function () {
+                    var $pwd = $(".pwd");
+                    if ($pwd.attr('type') === 'password') {
+                        $pwd.attr('type', 'text');
+                    } else {
+                        $pwd.attr('type', 'password');
+                    }
+                });
+            });
+        });
+
+        $("#modalAddUser").on('show.bs.modal', function (e) {
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), function (data) {
+                $("#modalAddUser .modal-body").html(data);
+
+                var form = $("#modalAddUser").closest("form");
+                $.validator.unobtrusive.parse(form);
+
+                $(".reveal").on('click', function () {
+                    var $pwd = $(".pwd");
+                    if ($pwd.attr('type') === 'password') {
+                        $pwd.attr('type', 'text');
+                    } else {
+                        $pwd.attr('type', 'password');
+                    }
+                });
+            });
+
+
+            //clear modal state if any
+            //$('.field-validation-error,.validation-summary-errors').text('')
+        });
+
+        $('#modalLock,#modalUnLock').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var email = button.data('email');
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            form.find(".modal-body input[type=hidden]").val(email);
+        });
+                                                                    //$("#btnCreateUser").click(function (e) {
+                                                                    //    e.preventDefault();
+                                                                    //    var _this = $(this);
+                                                                    //    var _form = _this.closest("form");
+
+                                                                    //    if (_form.validate().valid()) {
+                                                                    //        $.post(_form.attr("action"), _form.serialize(), function (data) {
+                                                                    //            //check the result and do whatever you want
+                                                                    //            alert('success')
+                                                                    //        });
+                                                                    //    }
+                                                                    //});
+    </script>
+}

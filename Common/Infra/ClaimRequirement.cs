@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Infra
+namespace Common.Infra
 {
     public class ClaimRequirement : IAuthorizationRequirement
     {

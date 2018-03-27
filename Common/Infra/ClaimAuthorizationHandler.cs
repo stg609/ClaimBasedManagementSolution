@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Constants;
 using Microsoft.AspNetCore.Authorization;
 
-namespace Infra
+namespace Common.Infra
 {
     public class ClaimAuthorizationHandler : AuthorizationHandler<ClaimRequirement>
     {

@@ -1,15 +1,24 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Infra
+namespace Common.Infra
 {
     public static class Extensions
     {
-        public static TList Empty<TList>() where TList : IEnumerable, new()
+        public static List<TSource> EmptyListIfEmpty<TSource>(this IEnumerable<TSource> list)
         {
-            return new TList();
+            Type genericArgument = typeof(TSource);
+            Type listType = typeof(List<>);
+            Type finalType = listType.MakeGenericType(genericArgument);
+            
+            if (list == null)
+            {
+                return Activator.CreateInstance(finalType) as List<TSource>;
+            }
+            else
+            {
+                return Activator.CreateInstance(finalType, list) as List<TSource>;
+            }
         }
     }
 }

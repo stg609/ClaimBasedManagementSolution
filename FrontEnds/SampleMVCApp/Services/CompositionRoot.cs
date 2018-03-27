@@ -1,6 +1,6 @@
-﻿using Domain;
+﻿using Common.Domain;
 using DryIoc;
-using Infra;
+using Common.Infra;
 using SampleMVCApp.Domain;
 using SampleMVCApp.Infra;
 

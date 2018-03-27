@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace Infra
+namespace Common.Infra
 {
     public class AuthorizationPolicyProvider : DefaultAuthorizationPolicyProvider
     {

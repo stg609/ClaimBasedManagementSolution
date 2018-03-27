@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 
-namespace Domain
+namespace Common.Domain
 {
     public interface IUnitOfWork : IDisposable
     {

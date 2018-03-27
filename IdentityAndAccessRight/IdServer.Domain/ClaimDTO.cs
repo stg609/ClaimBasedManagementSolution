@@ -1,5 +1,4 @@
-﻿using System;
-using Domain;
+﻿using Common.Domain;
 
 namespace IdServer.Domain
 {

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Domain;
+using Common.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infra
+namespace Common.Infra
 {
     public class GeneralRepository<TEntity, TKey> : IRepository<TEntity, TKey>
         where TEntity : class

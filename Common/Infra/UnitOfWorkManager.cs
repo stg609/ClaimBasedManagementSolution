@@ -1,7 +1,7 @@
-﻿using Domain;
+﻿using Common.Domain;
 using DryIoc;
 
-namespace Infra
+namespace Common.Infra
 {
     public class UnitOfWorkManager : IUnitOfWorkManager
     {

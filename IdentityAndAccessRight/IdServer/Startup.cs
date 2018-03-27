@@ -1,10 +1,11 @@
 ﻿using System;
+using Common.Infra;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
+using IdServer.Domain;
 using IdServer.Infra;
 using IdServer.Models;
 using IdServer.Services;
-using Infra;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,7 @@ namespace IdServer
             services.AddSingleton<IAuthorizationHandler, ClaimAuthorizationHandler>();
             services.AddTransient<IEmailSender, EmailSender>();
 
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IDBInitializer, DBInitializer>();
             services.AddScoped<DbContext, ApplicationDbContext>();
 

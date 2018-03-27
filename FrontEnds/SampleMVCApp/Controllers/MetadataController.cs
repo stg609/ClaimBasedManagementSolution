@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Infra;
+using Common.Infra;
 using Microsoft.AspNetCore.Mvc;
 
 namespace SampleMVCApp.Controllers

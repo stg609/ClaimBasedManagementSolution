@@ -20,25 +20,7 @@ namespace IdServer.Infra.Migrations
                 .HasAnnotation("ProductVersion", "2.0.2-rtm-10011")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("IdServer.Domain.ClaimDTO", b =>
-                {
-                    b.Property<int>("Key")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("OwnerIdentity");
-
-                    b.Property<string>("OwnerIp");
-
-                    b.Property<string>("Type");
-
-                    b.Property<string>("Value");
-
-                    b.HasKey("Key");
-
-                    b.ToTable("Claims");
-                });
-
-            modelBuilder.Entity("IdServer.Models.ApplicationUser", b =>
+            modelBuilder.Entity("IdServer.Domain.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -87,6 +69,24 @@ namespace IdServer.Infra.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+                });
+
+            modelBuilder.Entity("IdServer.Domain.ClaimDTO", b =>
+                {
+                    b.Property<int>("Key")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("OwnerIdentity");
+
+                    b.Property<string>("OwnerIp");
+
+                    b.Property<string>("Type");
+
+                    b.Property<string>("Value");
+
+                    b.HasKey("Key");
+
+                    b.ToTable("Claims");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -207,7 +207,7 @@ namespace IdServer.Infra.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("IdServer.Models.ApplicationUser")
+                    b.HasOne("IdServer.Domain.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -215,7 +215,7 @@ namespace IdServer.Infra.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("IdServer.Models.ApplicationUser")
+                    b.HasOne("IdServer.Domain.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -228,7 +228,7 @@ namespace IdServer.Infra.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("IdServer.Models.ApplicationUser")
+                    b.HasOne("IdServer.Domain.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -236,7 +236,7 @@ namespace IdServer.Infra.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("IdServer.Models.ApplicationUser")
+                    b.HasOne("IdServer.Domain.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

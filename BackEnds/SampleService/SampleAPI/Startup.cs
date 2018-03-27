@@ -1,5 +1,5 @@
 ﻿using System.Net.Http;
-using Infra;
+using Common.Infra;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
