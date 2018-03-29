@@ -23,15 +23,15 @@ namespace IdServer.Components
             return View(model is CreateUserViewModel ? "Create" : "Update", model);
         }
 
-        private List<CheckboxViewModel> GetRolesCheckboxViewModel(IEnumerable<string> currentRoles = null)
-        {
-            return (from itm in _roleManager.Roles
-                    select new CheckboxViewModel
-                    {
-                        Checked = (currentRoles ?? new string[] { }).Any(currentRole => currentRole.Equals(itm.Name)),
-                        Value = itm.Name,
-                        Text = itm.Name
-                    }).ToList();
-        }
+        //private List<CheckboxViewModel> GetRolesCheckboxViewModel(IEnumerable<string> currentRoles = null)
+        //{
+        //    return (from itm in _roleManager.Roles
+        //            select new CheckboxViewModel
+        //            {
+        //                Checked = (currentRoles ?? new string[] { }).Any(currentRole => currentRole.Equals(itm.Name)),
+        //                Value = itm.Name,
+        //                Text = itm.Name
+        //            }).ToList();
+        //}
     }
 }

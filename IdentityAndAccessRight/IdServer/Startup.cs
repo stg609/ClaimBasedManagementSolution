@@ -28,6 +28,8 @@ namespace IdServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), op => op.MigrationsAssembly("IdServer.Infra")));
 
@@ -41,6 +43,7 @@ namespace IdServer
             services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IDBInitializer, DBInitializer>();
             services.AddScoped<DbContext, ApplicationDbContext>();
 

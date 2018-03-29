@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common.Domain;
+using Common.Infra;
 
 namespace IdServer.Domain
 {
@@ -14,7 +15,16 @@ namespace IdServer.Domain
             _unitOfWorkManager = unitOfWorkManager;
         }
 
-        public void AddClaims(IEnumerable<ClaimDTO> claims, string ownerIdentity, string ownerIp)
+        public List<ClaimDTO> GetAllClaims()
+        {
+            IUnitOfWork uow = null;
+            using (uow = _unitOfWorkManager.Begin())
+            {
+                return uow.GetRepository<ClaimDTO, int>().GetAll()?.ToList().EmptyListIfEmpty();
+            }
+        }
+
+        public void AddClaims(IEnumerable<ClaimDTO> claims, string ownerIdentity, string ownerIP)
         {
             if (claims == null || !claims.Any())
             {
@@ -26,9 +36,9 @@ namespace IdServer.Domain
                 throw new ArgumentNullException(nameof(ownerIdentity));
             }
 
-            if (String.IsNullOrWhiteSpace(ownerIp))
+            if (String.IsNullOrWhiteSpace(ownerIP))
             {
-                throw new ArgumentNullException(nameof(ownerIp));
+                throw new ArgumentNullException(nameof(ownerIP));
             }
 
             IUnitOfWork uow = null;
@@ -40,11 +50,41 @@ namespace IdServer.Domain
                 var claimsWithOwnerInfo = claims.Select(itm =>
                 {
                     itm.OwnerIdentity = ownerIdentity;
-                    itm.OwnerIp = ownerIp;
+                    itm.OwnerIP = ownerIP;
                     return itm;
                 });
 
                 repo.AddRange(claimsWithOwnerInfo);
+                uow.Commit();
+            }
+        }
+
+        public void AddClaim(ClaimDTO claim, string ownerIdentity, string ownerIP)
+        {
+            if (claim == null)
+            {
+                throw new ArgumentNullException(nameof(claim));
+            }
+
+            if (String.IsNullOrWhiteSpace(ownerIdentity))
+            {
+                throw new ArgumentNullException(nameof(ownerIdentity));
+            }
+
+            if (String.IsNullOrWhiteSpace(ownerIP))
+            {
+                throw new ArgumentNullException(nameof(ownerIP));
+            }
+
+            IUnitOfWork uow = null;
+
+            using (uow = _unitOfWorkManager.Begin())
+            {
+                var repo = uow.GetRepository<ClaimDTO, int>();
+
+                claim.OwnerIdentity = ownerIdentity;
+                claim.OwnerIP = ownerIP;
+                repo.Add(claim);
                 uow.Commit();
             }
         }

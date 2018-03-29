@@ -118,7 +118,7 @@ namespace Common.Infra
 
         public static bool SendClaimToIdentityServer(HttpClient httpClient, string idServerClaimAPIUrl, string identity)
         {
-            var claims = ClaimsAnalyzer.GetAllClaimsOfControllers(Assembly.GetExecutingAssembly());
+            var claims = ClaimsAnalyzer.GetAllClaimsOfControllers(Assembly.GetCallingAssembly());
             if (claims == null || !claims.Any())
             {
                 return true;

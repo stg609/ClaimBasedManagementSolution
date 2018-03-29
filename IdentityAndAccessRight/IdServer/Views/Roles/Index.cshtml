@@ -1,10 +1,14 @@
-﻿@model IEnumerable<RoleViewModel>
+﻿@model CreateRoleViewModel
 @{
     ViewData["Title"] = "Index";
 }
 
 <h2>Role Manager</h2>
-
+<div class="btn-toolbar" role="toolbar" aria-label="Role Manager toolbar">
+    <div class="btn-group" role="group" aria-label="Role Manager tools">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAdd">Add Role</button>
+    </div>
+</div>
 
 <table class="table">
     <thead>
@@ -15,7 +19,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var role in Model)
+        @foreach (RoleViewModel role in ViewBag.Roles)
         {
             <tr>
                 <th>
@@ -28,10 +32,58 @@
                     }
                 </td>
                 <td>
-                    <button>test</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalEdit" data-name="@role.Name">Edit</button>
+                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalDelete" data-name="@role.Name">Delete</button>
                 </td>
             </tr>
-
         }
     </tbody>
 </table>
+
+@section scripts
+    {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @await Html.PartialAsync("_AjaxFormPartial")
+    <script src="~/js/DialogHelper.js"></script>
+    <script>
+        //init create 3 modals
+        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new role", "Add", function (event) {
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), function (data) {
+                var modalBody = modal.find(".modal-body");
+                modalBody.html("");
+                modalBody.html(data);
+
+                var form = modal.closest("form");
+                $.validator.unobtrusive.parse(form);
+            });
+        });
+
+        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Update role", "Update", function (event) {
+            var button = $(event.relatedTarget);
+            var name = button.data('name');
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), { name: name }, function (data) {
+                $("#modalEdit .modal-body").html(data);
+
+                var form = $("#modalEdit").closest("form");
+                $.validator.unobtrusive.parse(form);
+            });
+        });
+
+        createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete role", "Delete", function (event) {
+              var button = $(event.relatedTarget);
+              var name = button.data('name');
+              var modal = $(this);
+              var form = modal.closest("form");
+
+            form.find(".modal-body").html('<input type="hidden" name="Name" value="'+name+'"/>Are you sure to take this action ?');
+        });
+
+        var spinnerHtml = "<i class='fa fa-spinner fa-spin' style='font-size: 24px'></i>";
+    </script>
+}

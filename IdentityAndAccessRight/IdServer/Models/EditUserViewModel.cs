@@ -10,7 +10,7 @@ namespace IdServer.Models
         //public virtual string Password { get; set; }
         public List<CheckboxViewModel> Roles { get; set; }
         public List<CheckboxViewModel> Claims { get; set; }
-        public string UserName { get; set; }
+        public string Nickname { get; set; }
     }
 
     public class CreateUserViewModel : EditUserViewModel

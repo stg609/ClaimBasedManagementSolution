@@ -6,6 +6,6 @@ namespace IdServer.Models
     public class RoleViewModel
     {
         public string Name { get; set; }
-        public List<Claim> Claims { get; set; }
+        public IEnumerable<string> Claims { get; set; }
     }
 }

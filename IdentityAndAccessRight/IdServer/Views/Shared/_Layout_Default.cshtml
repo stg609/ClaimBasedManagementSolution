@@ -19,6 +19,8 @@
     </environment>
 </head>
 <body>
+    <div class="alertContainer">
+    </div>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -70,5 +72,13 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+    <script>
+        function showAndDismissAlert(type, message) {
+            var htmlAlert = '<div class="alert alert-dismissible alert-' + type + ' fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>';
+
+            // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+            $(".alertContainer").prepend(htmlAlert);
+        }
+    </script>
 </body>
 </html>

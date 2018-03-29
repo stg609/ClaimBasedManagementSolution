@@ -28,12 +28,13 @@ namespace IdServer.Domain
                                                     select err.Description);
         }
 
-        public async Task CreateAsync(string email, string password, IEnumerable<string> roles = null, IEnumerable<string> claims = null, string userName = null)
+        public async Task CreateAsync(string email, string password, IEnumerable<string> roles = null, IEnumerable<string> claims = null, string nickname = null)
         {
             var result = await _userManager.CreateAsync(new ApplicationUser
             {
                 Email = email,
-                UserName = String.IsNullOrWhiteSpace(userName) ? email : userName
+                UserName = email,
+                Nickname = String.IsNullOrWhiteSpace(nickname) ? email : nickname,
             }, password);
 
             if (result.Succeeded)
@@ -65,7 +66,10 @@ namespace IdServer.Domain
                     }
                 }
             }
-            throw new Exception(GetIdentityErrorMessage(result.Errors));
+            else
+            {
+                throw new Exception(GetIdentityErrorMessage(result.Errors));
+            }
         }
 
         public async Task UpdateAsync(string email, IEnumerable<string> roles, IEnumerable<string> claims, string password = null)

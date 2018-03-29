@@ -9,23 +9,30 @@ using IdServer.Domain;
 using IdServer.Models;
 using IdServer.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 
 namespace IdServer.Controllers
 {
     [Authorize(Policy = ClaimConstants.PolicyPrefix + "." + IdServerConstants.ID_SERVER_IDENTITY + ".Users")]
-    public class UsersController : Controller
+    public class UsersController : BaseController
     {
         private UserManager<ApplicationUser> _userManager;
         private RoleManager<IdentityRole> _roleManager;
         private IUserService _userService;
+        private IClaimService _claimService;
+        private IStringLocalizer<UsersController> _localizer;
 
-        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserService userService)
+        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IUserService userService, IClaimService claimService, IStringLocalizer<UsersController> localizer)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _userService = userService;
+            _claimService = claimService;
+
+            _localizer = localizer;
         }
 
         //Get all Users
@@ -57,21 +64,18 @@ namespace IdServer.Controllers
                               model.Password,
                               model.Roles?.Where(itm => itm.Checked).Select(itm => itm.Value),
                               model.Claims?.Where(itm => itm.Checked).Select(itm => itm.Value),
-                              model.UserName);
+                              model.Nickname);
 
-                    return RedirectToAction(nameof(Index));
+                    return Content(Url.Action(nameof(Index)));
                 }
                 catch (Exception ex)
                 {
-                    AddErrors(ex.Message);
-                    ViewBag.Users = GetAllUsers();
-                    return View(nameof(Index), model);
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
             else
             {
-                ViewBag.Users = GetAllUsers();
-                return View(nameof(Index), model);
+                return BadRequest(GetModelError());
             }
         }
 
@@ -90,20 +94,20 @@ namespace IdServer.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string email)
         {
-            if (string.IsNullOrWhiteSpace(email))
+            if (String.IsNullOrWhiteSpace(email))
             {
-                return BadRequest();
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target email address"));
             }
 
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                throw new System.Exception("User doesn't existed");
+                return BadRequest(String.Format(_localizer[ErrorConstants.USER_NOT_EXIST]));
             }
 
             return ViewComponent("EditUser", new UpdateUserViewModel
             {
-                UserName = user.UserName,
+                Nickname = user.Nickname,
                 Email = user.Email,
                 Roles = GetRolesCheckboxViewModel(_userManager.GetRolesAsync(user).Result.ToList()),
                 Claims = GetClaimsCheckboxViewModel(_userManager.GetClaimsAsync(user).Result.Where(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType)).ToList())
@@ -118,51 +122,54 @@ namespace IdServer.Controllers
                 try
                 {
                     await _userService.UpdateAsync(model.Email, model.Roles?.Where(itm => itm.Checked).Select(itm => itm.Value), model.Claims?.Where(itm => itm.Checked).Select(itm => itm.Value), model.Password);
-                    return RedirectToAction(nameof(Index));
+                    return Content(Url.Action(nameof(Index)));
                 }
                 catch (Exception ex)
                 {
-                    AddErrors(ex.Message);
-                    ViewBag.Users = GetAllUsers();
-                    return View(nameof(Index), model);
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
                 }
             }
             else
             {
-                ViewBag.Users = GetAllUsers();
-                return View(nameof(Index), model);
+                return BadRequest(GetModelError());
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> Lock(string email)
         {
+            if (String.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target email address"));
+            }
+
             try
             {
                 await _userService.LockAsync(email);
-                return RedirectToAction(nameof(Index));
+                return Content(Url.Action(nameof(Index)));
             }
             catch (Exception ex)
             {
-                AddErrors(ex.Message);
-                ViewBag.Users = GetAllUsers();
-                return View(nameof(Index));
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> UnLock(string email)
         {
+            if (String.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target email address"));
+            }
+
             try
             {
                 await _userService.UnLockAsync(email);
-                return RedirectToAction(nameof(Index));
+                return Content(Url.Action(nameof(Index)));
             }
             catch (Exception ex)
             {
-                AddErrors(ex.Message);
-                ViewBag.Users = GetAllUsers();
-                return View(nameof(Index));
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 
@@ -173,9 +180,9 @@ namespace IdServer.Controllers
             var userVMs = from user in users
                           select new UserViewModel
                           {
-                              UserName = user.UserName,
                               Email = user.Email,
                               EmailConfirmed = user.EmailConfirmed,
+                              Nickname = user.Nickname,
                               Locked = IsLocked(user),
                               Roles = _userManager.GetRolesAsync(user).Result.ToList(),
                               Claims = _userManager.GetClaimsAsync(user).Result.Where(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType)).Select(itm => itm.Value).ToList()
@@ -191,32 +198,7 @@ namespace IdServer.Controllers
 
         #endregion
 
-        #region Helpers
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
-        }
-
-        private void AddErrors(string errMessage)
-        {
-            ModelState.AddModelError(string.Empty, errMessage);
-        }
-
-        private IActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            else
-            {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
-            }
-        }
+        #region Helpers       
 
         private List<CheckboxViewModel> GetRolesCheckboxViewModel(IEnumerable<string> currentRoles = null)
         {
@@ -231,15 +213,13 @@ namespace IdServer.Controllers
 
         private List<CheckboxViewModel> GetClaimsCheckboxViewModel(IEnumerable<Claim> currentClaims = null)
         {
-            //return (from itm in _claimManager.GetAllClaims()
-            //        select new CheckboxViewModel
-            //        {
-            //            Checked = (currentClaims ?? new Claim[] { }).Any(currentClaim => currentClaim.Type.Equals(itm.Type) && currentClaim.Value.Equals(itm.Value)),
-            //            Value = itm.Value,
-            //            Text = itm.Value
-            //        }).ToList();
-
-            return null;
+            return (from itm in _claimService.GetAllClaims()
+                    select new CheckboxViewModel
+                    {
+                        Checked = (currentClaims ?? new Claim[] { }).Any(currentClaim => currentClaim.Type.Equals(itm.Type) && currentClaim.Value.Equals(itm.Value)),
+                        Value = itm.Value,
+                        Text = itm.Value
+                    })?.ToList();
         }
         #endregion
     }

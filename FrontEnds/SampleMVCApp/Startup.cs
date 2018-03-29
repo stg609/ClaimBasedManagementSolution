@@ -21,8 +21,6 @@ namespace SampleMVCApp
 {
     public class Startup
     {
-        const string IDENTITY = "mvc";
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -58,7 +56,7 @@ namespace SampleMVCApp
                     options.SignInScheme = "Cookies";
 
                     options.Authority = "http://localhost:5000";
-                    options.ClientId = IDENTITY;
+                    options.ClientId = Services.Constants.Identity;
                     options.ClientSecret = "secret";
                     options.RequireHttpsMetadata = false;
                     options.ResponseType = OpenIdConnectResponseType.CodeIdToken; //"code id_token";
@@ -110,7 +108,7 @@ namespace SampleMVCApp
             //var url = urlHelper.GetUrlHelper(context);
             ////menuService.GenerateMenusByControllerAction();
 
-            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", IDENTITY);
+            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", Services.Constants.Identity);
             if(!isSuccess)
             {
                 //TODO log it

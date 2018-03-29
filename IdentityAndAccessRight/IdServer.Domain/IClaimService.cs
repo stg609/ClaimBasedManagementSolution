@@ -4,6 +4,8 @@ namespace IdServer.Domain
 {
     public interface IClaimService
     {
-        void AddClaims(IEnumerable<ClaimDTO> claims, string ownerIdentity, string ownerIp);
+        List<ClaimDTO> GetAllClaims();
+        void AddClaims(IEnumerable<ClaimDTO> claims, string ownerIdentity, string ownerIP);
+        void AddClaim(ClaimDTO claim, string ownerIdentity, string ownerIP);
     }
 }
