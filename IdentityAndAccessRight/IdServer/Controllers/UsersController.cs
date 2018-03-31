@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.FrontEnd;
 using Common.Infra;
 using Constants;
 using IdServer.Domain;
@@ -102,7 +103,7 @@ namespace IdServer.Controllers
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return BadRequest(String.Format(_localizer[ErrorConstants.USER_NOT_EXIST]));
+                return BadRequest(String.Format(_localizer[ErrorConstants.USER_NOT_EXISTED]));
             }
 
             return ViewComponent("EditUser", new UpdateUserViewModel

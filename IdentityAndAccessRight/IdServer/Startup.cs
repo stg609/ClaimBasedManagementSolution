@@ -45,7 +45,6 @@ namespace IdServer
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IDBInitializer, DBInitializer>();
-            services.AddScoped<DbContext, ApplicationDbContext>();
 
             services.AddMvc();
 

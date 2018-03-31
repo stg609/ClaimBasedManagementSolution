@@ -1,0 +1,18 @@
+﻿@model CreateMenuViewModel
+
+<div class="form-group">
+    <label asp-for="Name"></label>
+    <input asp-for="Name" class="form-control" autofocus />
+    <span asp-validation-for="Name" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Url"></label>
+    <input asp-for="Url" class="form-control" />
+    <span asp-validation-for="Url" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="Parent"></label>
+    <select class="form-control" asp-for="ParentKey" asp-items="@Model.Parent">
+        <option value="0">Please select one</option>
+    </select>
+</div>

@@ -1,64 +1,166 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Common.FrontEnd;
+using Constants;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using SampleMVCApp.Domain;
 using SampleMVCApp.Models;
 using SampleMVCApp.Services;
 
 namespace SampleMVCApp.Controllers
 {
-    public class MenuController : Controller
+    [Authorize(Policy = ClaimConstants.PolicyPrefix + "." + Services.Constants.Identity + ".Actions.Menu")]
+    public class MenuController : BaseController
     {
-        private MenuService _mnuService;
+        private IMenuService _mnuService;
+        private IStringLocalizer<MenuController> _localizer;
 
-        public MenuController(MenuService mnuService)
+        public MenuController(IMenuService mnuService, IStringLocalizer<MenuController> localizer)
         {
             _mnuService = mnuService;
+            _localizer = localizer;
         }
 
         public IActionResult Index()
         {
-            List<MenuDTO> menus = _mnuService.GetMenusByClaims(User.Claims);
-
-            List<MenuViewModel> results = new List<MenuViewModel>();
-            foreach (var menu in menus.Where(itm=>itm.Visible).OrderBy(itm => itm.ParentMenuKey).ThenBy(itm => itm.Order))
-            {
-                if (menu.ParentMenuKey == 0)
-                {
-                    results.Add(new MenuViewModel { Key = menu.Key, Name = menu.Name, Order = menu.Order, Url = menu.Url });
-                }
-                else
-                {
-                    var parent = Single(results, itm => itm.Key == menu.ParentMenuKey);
-                    parent.Children.Add(new MenuViewModel { Key = menu.Key, Name = menu.Name, Order = menu.Order, Url = menu.Url });
-                }
-            }
-
-            return PartialView(results);
+            List<MenuDTO> menus = _mnuService.GetAll();
+            return View(menus.ToMenuViewModels(true));
         }
 
-        private MenuViewModel Single(List<MenuViewModel> menus, Func<MenuViewModel, bool> predicate)
+        public IActionResult Create()
         {
-            if (menus == null)
+            return ViewComponent("EditMenu", new CreateMenuViewModel(_mnuService.GetAll().ToMenuViewModels()));
+        }
+
+        [HttpPost]
+        public IActionResult Create(CreateMenuViewModel model)
+        {
+            if (ModelState.IsValid)
             {
-                return null;
+                try
+                {
+                    _mnuService.Create(new MenuDTO { Name = model.Name, Order = model.Order, Url = model.Url, ParentMenuKey = model.ParentKey, Visible = true });
+
+                    return Content(Url.Action(nameof(Index)));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest(GetModelError());
+            }
+        }
+
+        public IActionResult Edit(int key = 0)
+        {
+            if (key <= 0)
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target menu"));
             }
 
-            MenuViewModel result = menus.SingleOrDefault(predicate);
-
-            menus.ForEach(itm =>
+            MenuDTO menu = _mnuService.FindByKey(key);
+            if (menu == null)
             {
-                var menu = Single(itm.Children, predicate);
-                if (menu != null && result != null)
-                {
-                    throw new ArgumentException();
-                }
+                return BadRequest(String.Format(_localizer[ErrorConstants.MENU_NOT_EXISTED]));
+            }
 
-                result = menu;
-            });
-            return result;
+            UpdateMenuViewModel model = new UpdateMenuViewModel(_mnuService.GetAll().ToMenuViewModels(true));
+            model.Key = menu.Key;
+            model.Name = menu.Name;
+            model.Url = menu.Url;
+            model.Order = menu.Order;
+            model.ParentKey = menu.ParentMenuKey;
+            model.Visible = menu.Visible;
+
+            return ViewComponent("EditMenu", model);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(UpdateMenuViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _mnuService.Update(model.Key, model.Name, model.Url, model.Visible, model.ParentKey);
+
+                    return Content(Url.Action(nameof(Index)));
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                }
+            }
+            else
+            {
+                return BadRequest(GetModelError());
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Visibility(int key = 0, bool visible = true)
+        {
+            if (key <= 0)
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target menu"));
+            }
+
+            try
+            {
+                _mnuService.SetVisibility(key, visible);
+
+                return Content(Url.Action(nameof(Index)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int key = 0)
+        {
+            if (key <= 0)
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target menu"));
+            }
+
+            try
+            {
+                _mnuService.Delete(key);
+
+                return Content(Url.Action(nameof(Index)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Move(int key = 0, int step = 0)
+        {
+            if (key <= 0)
+            {
+                return BadRequest(String.Format(_localizer[ErrorConstants.ARGUMENT_IS_MISSING], "Target menu"));
+            }
+
+            try
+            {
+                _mnuService.Move(key, step);
+
+                return Content(Url.Action(nameof(Index)));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
     }
 }

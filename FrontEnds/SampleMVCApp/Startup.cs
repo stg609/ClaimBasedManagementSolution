@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using SampleMVCApp.Infra;
 using SampleMVCApp.Services;
+using SampleMVCApp.Domain;
+using Common.Domain;
 
 namespace SampleMVCApp
 {
@@ -31,6 +33,8 @@ namespace SampleMVCApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            services.AddLocalization(opts => { opts.ResourcesPath = "Resources"; });
+
             services.AddDbContext<ApplicationDbContext>(options =>
              options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), op => op.MigrationsAssembly("SampleMVCApp.Infra")));
 
@@ -42,7 +46,6 @@ namespace SampleMVCApp
             services.AddSingleton<IAuthorizationHandler, ClaimAuthorizationHandler>();
             services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
-            services.AddScoped<DbContext, ApplicationDbContext>();
             services.AddScoped<HttpClient>();
 
             services.AddAuthentication(options =>

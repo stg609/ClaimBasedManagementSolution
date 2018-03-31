@@ -1,27 +1,89 @@
 ﻿@model List<MenuViewModel>
-@*
-    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
-*@
 
-<ul>
-    @foreach (MenuViewModel menu in Model)
+@section Styles
     {
-        <li>
-            <a href="@menu.Url"> @menu.Name </a>
-            @if (menu.Children != null && menu.Children.Any())
-            {
-                <ul>
-                    @foreach (MenuViewModel secMenu in menu.Children)
-                    {
-                        <li>
-                            <a href="@secMenu.Url"> @secMenu.Name </a>
-                        </li>
-                    }
-                </ul>
+    <link href="~/css/material-switch.css" rel="stylesheet" />
+}
+<h2>Menu Manager</h2>
 
-            }
-        </li>
+<div class="btn-toolbar mb10" role="toolbar" aria-label="Role Manager toolbar">
+    <div class="btn-group" role="group" aria-label="Role Manager tools">
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAdd">Add Menu</button>
+    </div>
+</div>
 
-    }
-</ul>
+<div class="list-group">
+    @await Component.InvokeAsync("Menu", new { menus = Model })
+</div>
 
+@section scripts
+    {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+    @await Html.PartialAsync("_AjaxFormPartial")
+    <script src="~/js/DialogHelper.js"></script>
+    <script>
+        //init create 3 modals
+        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new menu", "Add", function (event) {
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), function (data) {
+                var modalBody = modal.find(".modal-body");
+                modalBody.html("");
+                modalBody.html(data);
+
+                var form = modal.closest("form");
+                $.validator.unobtrusive.parse(form);
+            });
+        });
+
+        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Edit menu", "Update", function (event) {
+            var button = $(event.relatedTarget);
+            var key = button.data('key');
+            var modal = $(this);
+            var form = modal.closest("form");
+
+            $.get(form.attr("action"), { key: key }, function (data) {
+                var modalBody = modal.find(".modal-body");
+                modalBody.html("");
+                modalBody.html(data);
+
+                var form = modal.closest("form");
+                $.validator.unobtrusive.parse(form);
+            });
+        });
+
+          createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete Menu", "Delete", function (event) {
+              var button = $(event.relatedTarget);
+              var key = button.data('key');
+              var modal = $(this);
+              var form = modal.closest("form");
+
+            form.find(".modal-body").html('<input type="hidden" name="Key" value="'+key+'"/>Are you sure to take this action ?');
+        });
+
+        $(".menu-item .material-switch-checkbox").change(function () {
+            var checked = $(this).is(':checked');
+            var key = $(this).data("key");
+            var url = $(this).data("url");
+
+            $.post(url, { key: key, visible: checked }).done(function (data) {
+                 window.location.href = data;
+            }).fail(function(data){
+                 showAndDismissAlert("danger", data.responseText);
+            });
+        });
+
+        $(".menu-item .moveup, .menu-item .movedown").click(function () {
+            var isUp = $(this).hasClass("moveup");
+            var key = $(this).data("key");
+            var url = $(this).data("url");
+
+            $.post(url, { key: key, step: (isUp?1:-1)}).done(function (data) {
+                window.location.href = data;
+            }).fail(function (data) {
+                showAndDismissAlert("danger", data.responseText);
+            });
+        });
+    </script>
+}

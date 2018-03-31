@@ -8,15 +8,21 @@
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" />
+        <script defer src="~/lib/fontawesome/fontawesome-all.js"></script>
     </environment>
     <environment exclude="Development">
         <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css"
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
         <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <script defer src="~/lib/fontawesome/fontawesome.min.js" asp-append-version="true"></script>
     </environment>
+
+    @RenderSection("Styles", false)
 </head>
 <body>
+    <div class="alertContainer">
+    </div>
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
             <div class="navbar-header">
@@ -29,11 +35,7 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">SampleMVCApp</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
+                @await Component.InvokeAsync("NavigationBar", User.Claims)
             </div>
         </div>
     </nav>
@@ -67,5 +69,13 @@
     </environment>
 
     @RenderSection("Scripts", required: false)
+    <script>
+        function showAndDismissAlert(type, message) {
+            var htmlAlert = '<div class="alert alert-dismissible alert-' + type + ' fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' + message + '</div>';
+
+            // Prepend so that alert is on top, could also append if we want new alerts to show below instead of on top.
+            $(".alertContainer").prepend(htmlAlert);
+        }
+    </script>
 </body>
 </html>

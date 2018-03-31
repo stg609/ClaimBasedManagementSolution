@@ -33,3 +33,46 @@
         display: none;
     }
 }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+    color: white;
+    display: inline-block;
+}
+
+.row-center {
+    /*Ensure the container is also 100% height*/
+    display: flex;
+    height: 100%;
+    align-items: center;
+    text-align: center;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center
+}
+
+    .menu-item .menu-item-content {
+        flex: 1;
+    }
+
+.menu-item-child:before {
+    content:"-";
+    margin-right:2px;
+
+}
+
+.mr10{
+    margin-right:10px;
+}
+
+.mb10{
+    margin-bottom:10px;
+}

@@ -1,4 +1,5 @@
-﻿using Common.Domain;
+﻿using System;
+using Common.Domain;
 using DryIoc;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,9 +29,9 @@ namespace Common.Infra
 
         public IRepository<TEntity, TKey> GetRepository<TEntity, TKey>() where TEntity : class
         {
-            //TODO should use DI way to get real repository
-            //return new GeneralRepository<TEntity, TKey>(this);
-            return _container.Resolve<IRepository<TEntity, TKey>>();
+            //Ensure use the same UnitOfWork Instance 
+            var getRepository = _container.Resolve<Func<IUnitOfWork, IRepository<TEntity, TKey>>>();
+            return getRepository(this);
         }
     }
 }

@@ -28,6 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\FrontEnd\FrontEnd.csproj" />
     <ProjectReference Include="..\..\Common\Infra\Infra.csproj" />
     <ProjectReference Include="..\IdServer.Infra\IdServer.Infra.csproj" />
   </ItemGroup>

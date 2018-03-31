@@ -13,7 +13,8 @@ namespace Common.Domain
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);
 
-        void Remove(TEntity entity);
+        void Remove(TKey key);
+        void RemoveAll();
 
         void Update(TEntity entity);
     }

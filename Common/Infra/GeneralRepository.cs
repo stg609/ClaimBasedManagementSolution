@@ -37,19 +37,28 @@ namespace Common.Infra
             return _unitOfWork.Context.Set<TEntity>().Where(predicate).SingleOrDefault();
         }
 
-        public void Remove(TEntity entity)
+        public void Remove(TKey key)
         {
-            TEntity existing = _unitOfWork.Context.Set<TEntity>().Find(entity);
+            TEntity existing = _unitOfWork.Context.Set<TEntity>().Find(key);
             if (existing != null)
             {
                 _unitOfWork.Context.Set<TEntity>().Remove(existing);
             }
         }
 
+        public void RemoveAll()
+        {
+            _unitOfWork.Context.Set<TEntity>().RemoveRange(_unitOfWork.Context.Set<TEntity>());
+        }
+
         public void Update(TEntity entity)
         {
-            _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
-            _unitOfWork.Context.Set<TEntity>().Attach(entity);
+            //Only Update the state if the entity is not belong to the DbContext, otherwise the Attach method will cause the attached entity's State become UnChanged.
+            if (!_unitOfWork.Context.Exists(entity))
+            {
+                _unitOfWork.Context.Entry(entity).State = EntityState.Modified;
+                _unitOfWork.Context.Set<TEntity>().Attach(entity);
+            }
         }
     }
 }

@@ -23,5 +23,10 @@ namespace SampleMVCApp.Infra
             builder.Entity<MenuDTO>().Property(itm => itm.Visible).HasDefaultValue<bool>(true);
             
         }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+        }
     }
 }

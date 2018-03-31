@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\FrontEnd\FrontEnd.csproj" />
     <ProjectReference Include="..\..\Common\Infra\Infra.csproj" />
     <ProjectReference Include="..\SampleMVCApp.Infra\SampleMVCApp.Infra.csproj" />
   </ItemGroup>
