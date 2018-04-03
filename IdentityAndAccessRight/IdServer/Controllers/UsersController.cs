@@ -55,6 +55,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
             if (ModelState.IsValid)
@@ -116,6 +117,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateUserViewModel model)
         {
             if (ModelState.IsValid)
@@ -137,6 +139,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Lock(string email)
         {
             if (String.IsNullOrWhiteSpace(email))
@@ -156,6 +159,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnLock(string email)
         {
             if (String.IsNullOrWhiteSpace(email))

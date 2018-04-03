@@ -55,6 +55,7 @@ namespace IdServer.Controllers
 
             var model = new IndexViewModel
             {
+                Nickname = user.Nickname,
                 Username = user.UserName,
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
@@ -97,6 +98,16 @@ namespace IdServer.Controllers
                 if (!setPhoneResult.Succeeded)
                 {
                     throw new ApplicationException($"Unexpected error occurred setting phone number for user with ID '{user.Id}'.");
+                }
+            }
+
+            if(String.IsNullOrWhiteSpace(model.Nickname))
+            {
+                user.Nickname = model.Nickname;
+                var result = await _userManager.UpdateAsync(user);
+                if(!result.Succeeded)
+                {
+                    throw new ApplicationException($"Unexpected error occurred '{user.Id}'.");
                 }
             }
 

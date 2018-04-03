@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -32,8 +34,7 @@ namespace IdServer.Services
 
             var principal = await _claimsFactory.CreateAsync(user);
             var claims = principal.Claims.ToList();
-
-            //TODO, should also include claims belong to roles.
+            claims.Add(new Claim(ClaimTypes.Name, user.Nickname));
 
             context.IssuedClaims = claims;
         }

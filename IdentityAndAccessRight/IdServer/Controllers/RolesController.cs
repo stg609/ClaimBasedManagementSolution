@@ -49,6 +49,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateRoleViewModel model)
         {
             if (ModelState.IsValid)
@@ -67,6 +68,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(string name)
         {
             if (String.IsNullOrWhiteSpace(name))
@@ -114,6 +116,7 @@ namespace IdServer.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateRoleViewModel model)
         {
             if (ModelState.IsValid)

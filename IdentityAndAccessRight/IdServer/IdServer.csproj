@@ -12,6 +12,11 @@
     <None Remove="Views\Shared\Components\EditUser\Update.cshtml\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\LoginInputViewModel.cs" />
+    <Compile Remove="Models\LoginViewModel.cs" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="IdentityServer4.AspNetIdentity" Version="2.1.0" />

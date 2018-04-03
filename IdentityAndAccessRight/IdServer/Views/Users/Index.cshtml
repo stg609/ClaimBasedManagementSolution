@@ -10,7 +10,7 @@
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAddUser">Add User</button>
     </div>
 </div>
-
+@Html.AntiForgeryToken()
 <table class="table">
     <thead>
         <tr>
@@ -60,84 +60,6 @@
     </tbody>
 </table>
 
-@*<form method="post" asp-action="Create" autocomplete="off">
-        <div class="modal fade" id="modalAddUser" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4>Add New User</h4>
-                    </div>
-                    <div class="modal-body">
-                        <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="btnCreateUser" type="submit" class="btn btn-primary">Create</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>*@
-
-@*<form asp-action="Edit" method="post" autocomplete="off">
-        <div class="modal fade" id="modalEditUser" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4>Edit User</h4>
-                    </div>
-                    <div class="modal-body">
-                        <i class="fa fa-spinner fa-spin" style="font-size:24px"></i>
-                    </div>
-                    <div class="modal-footer">
-                        <button id="btnUpdateUser" type="submit" class="btn btn-primary">Update</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>*@
-
-@*<form asp-action="Lock" method="post">
-        <div class="modal fade" id="modalLock" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4>Lock</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="Email" />
-                        Are you sure to take this action?
-                    </div>
-                    <div class="modal-footer">
-                        <button id="btnLock" type="submit" class="btn btn-primary">Lock</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>
-
-    <form asp-action="UnLock" method="post">
-        <div class="modal fade" id="modalUnLock" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4>UnLock</h4>
-                    </div>
-                    <div class="modal-body">
-                        <input type="hidden" name="Email" />
-                        Are you sure to take this action?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">UnLock</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </form>*@
-
 @section scripts    {
     @*Enable Client Side Validation*@
     @await Html.PartialAsync("_ValidationScriptsPartial")
@@ -148,7 +70,9 @@
             $(this).find('[autofocus]').focus();
         });
 
-        createConfirmationDialog("modalAddUser", "@Url.Action("Create")", "Create new user", "Create", function (event) {
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        createConfirmationDialog("modalAddUser", "@Url.Action("Create")", "Create new user", "Create",token, function (event) {
             var modal = $(this);
             var form = modal.closest("form");
 
@@ -171,7 +95,7 @@
             });
         });
 
-        createConfirmationDialog("modalEditUser", "@Url.Action("Edit")", "Update user", "Update", function (event) {
+        createConfirmationDialog("modalEditUser", "@Url.Action("Edit")", "Update user", "Update",token, function (event) {
             var button = $(event.relatedTarget);
             var email = button.data('email');
             var modal = $(this);
@@ -196,7 +120,7 @@
             });
         });
 
-        createConfirmationDialog("modalLock", "@Url.Action("Lock")", "Lock user", "Lock", function (event) {
+        createConfirmationDialog("modalLock", "@Url.Action("Lock")", "Lock user", "Lock", token, function (event) {
             var button = $(event.relatedTarget);
             var email = button.data('email');
             var modal = $(this);
@@ -205,7 +129,7 @@
             form.find(".modal-body").html('<input type="hidden" name="Email" value="' + email + '"/>Are you sure to take this action ?');
         });
 
-        createConfirmationDialog("modalUnLock", "@Url.Action("UnLock")", "UnLock user", "UnLock", function (event) {
+        createConfirmationDialog("modalUnLock", "@Url.Action("UnLock")", "UnLock user", "UnLock", token, function (event) {
             var button = $(event.relatedTarget);
             var email = button.data('email');
             var modal = $(this);

@@ -13,6 +13,7 @@
 </div>
 
 <div class="list-group">
+    @Html.AntiForgeryToken()
     @await Component.InvokeAsync("Menu", new { menus = Model })
 </div>
 
@@ -23,7 +24,9 @@
     <script src="~/js/DialogHelper.js"></script>
     <script>
         //init create 3 modals
-        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new menu", "Add", function (event) {
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
+        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new menu", "Add", token, function (event) {
             var modal = $(this);
             var form = modal.closest("form");
 
@@ -37,7 +40,7 @@
             });
         });
 
-        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Edit menu", "Update", function (event) {
+        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Edit menu", "Update", token, function (event) {
             var button = $(event.relatedTarget);
             var key = button.data('key');
             var modal = $(this);
@@ -53,7 +56,7 @@
             });
         });
 
-          createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete Menu", "Delete", function (event) {
+        createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete Menu", "Delete", token, function (event) {
               var button = $(event.relatedTarget);
               var key = button.data('key');
               var modal = $(this);
@@ -67,7 +70,7 @@
             var key = $(this).data("key");
             var url = $(this).data("url");
 
-            $.post(url, { key: key, visible: checked }).done(function (data) {
+            $.post(url, { key: key, visible: checked, __RequestVerificationToken: token  }).done(function (data) {
                  window.location.href = data;
             }).fail(function(data){
                  showAndDismissAlert("danger", data.responseText);
@@ -79,7 +82,7 @@
             var key = $(this).data("key");
             var url = $(this).data("url");
 
-            $.post(url, { key: key, step: (isUp?1:-1)}).done(function (data) {
+            $.post(url, { key: key, step: (isUp ? 1 : -1), __RequestVerificationToken: token }).done(function (data) {
                 window.location.href = data;
             }).fail(function (data) {
                 showAndDismissAlert("danger", data.responseText);

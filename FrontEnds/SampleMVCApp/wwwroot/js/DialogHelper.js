@@ -1,4 +1,4 @@
-﻿var createConfirmationDialog = function (id, action, title, txtOkBtn, formContentFunction) {
+﻿var createConfirmationDialog = function (id, action, title, txtOkBtn,requestAntiForgeryToken, formContentFunction) {
     var html = '<form action="' + action + '" autocomplete="off" data-ajax-begin="onBegin" data-ajax-complete="onComplete"' +
         'data-ajax-failure="onFailed" data-ajax-success="onSuccess" data-ajax="true" data-ajax-method="POST" >' +
         '<div class="modal fade" id="' + id + '" role="dialog">' +
@@ -10,6 +10,7 @@
         '</div>' +
         '<div class="modal-body"></div>' +
         '<div class="modal-footer">' +
+        '<input type="hidden" name="__RequestVerificationToken" value="'+requestAntiForgeryToken+'" />'+
         '<button type="submit" class="btn btn-primary">' + txtOkBtn + '</button> <button class="btn btn-default" data-dismiss="modal">Cancel</button>' +
         '</div>' +
         '</div>' +

@@ -18,6 +18,7 @@ using SampleMVCApp.Infra;
 using SampleMVCApp.Services;
 using SampleMVCApp.Domain;
 using Common.Domain;
+using System.Security.Claims;
 
 namespace SampleMVCApp
 {
@@ -68,6 +69,7 @@ namespace SampleMVCApp
 
                     //Given to the hybrid flow, we need to map custom claims to id token, otherwise only the common claims will be included in the id token.
                     options.ClaimActions.MapJsonKey(ClaimConstants.PermissionClaimType, ClaimConstants.PermissionClaimType);
+                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, ClaimTypes.Name);
 
                     options.SaveTokens = true;
                     options.Scope.Add("offline_access");
@@ -112,7 +114,7 @@ namespace SampleMVCApp
             ////menuService.GenerateMenusByControllerAction();
 
             bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", Services.Constants.Identity);
-            if(!isSuccess)
+            if (!isSuccess)
             {
                 //TODO log it
             }

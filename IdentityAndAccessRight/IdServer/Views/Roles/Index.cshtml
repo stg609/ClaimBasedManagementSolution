@@ -9,7 +9,7 @@
         <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modalAdd">Add Role</button>
     </div>
 </div>
-
+@Html.AntiForgeryToken()
 <table class="table">
     <thead>
         <tr>
@@ -46,8 +46,10 @@
     @await Html.PartialAsync("_AjaxFormPartial")
     <script src="~/js/DialogHelper.js"></script>
     <script>
+        var token = $('input[name="__RequestVerificationToken"]').val();
+
         //init create 3 modals
-        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new role", "Add", function (event) {
+        createConfirmationDialog("modalAdd", "@Url.Action("Create")", "Add new role", "Add",token, function (event) {
             var modal = $(this);
             var form = modal.closest("form");
 
@@ -61,7 +63,7 @@
             });
         });
 
-        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Update role", "Update", function (event) {
+        createConfirmationDialog("modalEdit", "@Url.Action("Edit")", "Update role", "Update", token, function (event) {
             var button = $(event.relatedTarget);
             var name = button.data('name');
             var modal = $(this);
@@ -75,7 +77,7 @@
             });
         });
 
-        createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete role", "Delete", function (event) {
+        createConfirmationDialog("modalDelete", "@Url.Action("Delete")", "Delete role", "Delete",token, function (event) {
               var button = $(event.relatedTarget);
               var name = button.data('name');
               var modal = $(this);

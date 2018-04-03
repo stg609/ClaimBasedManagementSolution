@@ -36,6 +36,7 @@ namespace SampleMVCApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(CreateMenuViewModel model)
         {
             if (ModelState.IsValid)
@@ -82,6 +83,7 @@ namespace SampleMVCApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Edit(UpdateMenuViewModel model)
         {
             if (ModelState.IsValid)
@@ -124,6 +126,7 @@ namespace SampleMVCApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Delete(int key = 0)
         {
             if (key <= 0)
@@ -144,6 +147,7 @@ namespace SampleMVCApp.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Move(int key = 0, int step = 0)
         {
             if (key <= 0)

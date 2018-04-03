@@ -9,6 +9,7 @@ namespace IdServer.Models.ManageViewModels
     public class IndexViewModel
     {
         public string Username { get; set; }
+        public string Nickname { get; set; }
 
         public bool IsEmailConfirmed { get; set; }
 

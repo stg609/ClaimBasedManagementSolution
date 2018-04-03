@@ -1,8 +1,6 @@
 ﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleMVCApp.Models;
-using SampleMVCApp.Services;
 
 namespace SampleMVCApp.Controllers
 {
