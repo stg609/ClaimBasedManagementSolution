@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Constants;
+using Common.Constants;
 using IdServer.Domain;
 using IdServer.Models;
 using IdServer.Services;

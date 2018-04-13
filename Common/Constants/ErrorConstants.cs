@@ -1,4 +1,4 @@
-﻿namespace Constants
+﻿namespace Common.Constants
 {
     public class ErrorConstants
     {

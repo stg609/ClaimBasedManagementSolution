@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using IdServer.Models;
 using Microsoft.AspNetCore.Authorization;
-using Constants;
+using Common.Constants;
 using IdServer.Services;
 
 namespace IdServer.Controllers

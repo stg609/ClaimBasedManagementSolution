@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Common.Domain;
 using Common.Infra;
-using Constants;
+using Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;

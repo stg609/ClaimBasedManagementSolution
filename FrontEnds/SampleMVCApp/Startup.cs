@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using Constants;
+using Common.Constants;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Common.Infra;

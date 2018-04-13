@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using Constants;
+using Common.Constants;
 
 namespace SampleMVCApp.Services
 {

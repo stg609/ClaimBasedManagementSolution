@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Constants;
+using Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;

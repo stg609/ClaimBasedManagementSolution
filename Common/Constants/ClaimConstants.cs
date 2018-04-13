@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Constants
+﻿namespace Common.Constants
 {
     public class ClaimConstants
     {

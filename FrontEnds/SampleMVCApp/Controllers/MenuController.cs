@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Common.FrontEnd;
-using Constants;
+using Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

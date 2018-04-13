@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Common.Domain;
 using Common.FrontEnd;
 using Common.Infra;
-using Constants;
+using Common.Constants;
 using IdServer.Domain;
 using IdServer.Models;
 using IdServer.Services;

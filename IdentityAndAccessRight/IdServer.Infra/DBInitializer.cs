@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Constants;
+using Common.Constants;
 using IdServer.Domain;
 using Microsoft.AspNetCore.Identity;
 

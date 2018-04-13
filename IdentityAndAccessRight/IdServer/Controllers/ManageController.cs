@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Constants;
+using Common.Constants;
 using IdServer.Domain;
 using IdServer.Models.ManageViewModels;
 using IdServer.Services;
