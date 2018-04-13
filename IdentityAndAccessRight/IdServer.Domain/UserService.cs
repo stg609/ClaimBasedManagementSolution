@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.Domain;
 using Constants;
 using Microsoft.AspNetCore.Identity;
 
@@ -55,10 +56,7 @@ namespace IdServer.Domain
                 //Add Claim
                 if (claims != null && claims.Any())
                 {
-                    result = await _userManager.AddClaimsAsync(user, claims.Select(itm =>
-                    {
-                        return new Claim(ClaimConstants.PolicyPrefix, itm);
-                    }));
+                    result = await _userManager.AddClaimsAsync(user, new Claim[] { claims.GetPermissionClaims() });
 
                     if (!result.Succeeded)
                     {
@@ -113,27 +111,23 @@ namespace IdServer.Domain
                 throw new Exception(GetIdentityErrorMessage(result.Errors));
             }
 
-            var currentAdditionalClaims = from itm in await _userManager.GetClaimsAsync(user)
-                                          where itm.Type.Equals(ClaimConstants.PermissionClaimType)
-                                          select itm.Value;
-
-            var newClaims = claims ?? new List<string>();
-
-            var toDeleteClaims = from itm in currentAdditionalClaims.Except(newClaims)
-                                 select new Claim(ClaimConstants.PermissionClaimType, itm);
-            var toAddClaims = from itm in newClaims.Except(currentAdditionalClaims)
-                              select new Claim(ClaimConstants.PermissionClaimType, itm);
-
-            result = await _userManager.RemoveClaimsAsync(user, toDeleteClaims);
-            if (!result.Succeeded)
+            if (claims != null && claims.Any())
             {
-                throw new Exception(GetIdentityErrorMessage(result.Errors));
-            }
+                var permssionClaims = (await _userManager.GetClaimsAsync(user)).SingleOrDefault(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType));
+                if (permssionClaims != null)
+                {
+                    result = await _userManager.RemoveClaimAsync(user, permssionClaims);
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(GetIdentityErrorMessage(result.Errors));
+                    }
+                }
 
-            result = await _userManager.AddClaimsAsync(user, toAddClaims);
-            if (!result.Succeeded)
-            {
-                throw new Exception(GetIdentityErrorMessage(result.Errors));
+                result = await _userManager.AddClaimAsync(user, claims.GetPermissionClaims());
+                if (!result.Succeeded)
+                {
+                    throw new Exception(GetIdentityErrorMessage(result.Errors));
+                }
             }
         }
 

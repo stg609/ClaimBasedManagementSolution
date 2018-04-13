@@ -27,7 +27,7 @@ namespace IdServer.Areas.API.Controllers
                 var claims = from claim in model.Claims
                              select new ClaimDTO { Type = claim.Type, Value = claim.Value };
 
-                _claimService.AddClaims(claims, model.Identity, ownerIp);
+                _claimService.AddOrUpdateClaims(claims, model.Identity, ownerIp);
 
                 return Ok();
             }

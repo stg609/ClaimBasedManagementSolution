@@ -69,9 +69,10 @@ namespace SampleMVCApp
 
                     //Given to the hybrid flow, we need to map custom claims to id token, otherwise only the common claims will be included in the id token.
                     options.ClaimActions.MapJsonKey(ClaimConstants.PermissionClaimType, ClaimConstants.PermissionClaimType);
-                    options.ClaimActions.MapJsonKey(ClaimTypes.Name, ClaimTypes.Name);
+                    options.ClaimActions.MapJsonKey(ClaimConstants.NicknameClaimType, ClaimConstants.NicknameClaimType);
 
                     options.SaveTokens = true;
+                    options.Scope.Add("api1");
                     options.Scope.Add("offline_access");
                 });
 

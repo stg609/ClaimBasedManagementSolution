@@ -1,7 +1,9 @@
 ﻿using System.Net.Http;
 using Common.Infra;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +11,6 @@ namespace SampleAPI
 {
     public class Startup
     {
-       private const string IDENTITY = "api1";
 
         public Startup(IConfiguration configuration)
         {
@@ -25,13 +26,17 @@ namespace SampleAPI
                .AddAuthorization()
                .AddJsonFormatters();
 
+            services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, ClaimAuthorizationHandler>();
+            services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
             services.AddAuthentication("Bearer")
                 .AddIdentityServerAuthentication(options =>
                 {
                     options.Authority = "http://localhost:5000";
                     options.RequireHttpsMetadata = false;
 
-                    options.ApiName = IDENTITY;
+                    options.ApiName = Services.Constants.IDENTITY;
                 });
 
             services.AddScoped<HttpClient>();
@@ -47,7 +52,7 @@ namespace SampleAPI
             app.UseAuthentication();
             app.UseMvc();
 
-            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", IDENTITY);
+            bool isSuccess = ClaimsAnalyzer.SendClaimToIdentityServer(client, "http://localhost:5000/api/claims", Services.Constants.IDENTITY);
             if (!isSuccess)
             {
                 //TODO log it

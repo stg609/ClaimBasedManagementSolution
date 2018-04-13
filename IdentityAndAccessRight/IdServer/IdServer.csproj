@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Constants\Constants.csproj" />
     <ProjectReference Include="..\..\Common\FrontEnd\FrontEnd.csproj" />
     <ProjectReference Include="..\..\Common\Infra\Infra.csproj" />
     <ProjectReference Include="..\IdServer.Infra\IdServer.Infra.csproj" />

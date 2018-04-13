@@ -66,146 +66,78 @@
     @await Html.PartialAsync("_AjaxFormPartial")
     <script src="~/js/DialogHelper.js"></script>
     <script>
-        $(document).on('shown.bs.modal', '.modal', function () {
-            $(this).find('[autofocus]').focus();
-        });
+        (function () {
+            var token = $('input[name="__RequestVerificationToken"]').val();
 
-        var token = $('input[name="__RequestVerificationToken"]').val();
+            $(document).on('shown.bs.modal', '.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
 
-        createConfirmationDialog("modalAddUser", "@Url.Action("Create")", "Create new user", "Create",token, function (event) {
-            var modal = $(this);
-            var form = modal.closest("form");
-
-            $.get(form.attr("action"), function (data) {
-                var modalBody = modal.find(".modal-body");
-                modalBody.html("");
-                modalBody.html(data);
-
+            $.createConfirmationDialog("modalAddUser", "@Url.Action("Create")", "Create new user", "Create", token, function (event) {
+                var modal = $(this);
                 var form = modal.closest("form");
-                $.validator.unobtrusive.parse(form);
 
-                $(".reveal").on('click', function () {
-                    var $pwd = $(".pwd");
-                    if ($pwd.attr('type') === 'password') {
-                        $pwd.attr('type', 'text');
-                    } else {
-                        $pwd.attr('type', 'password');
-                    }
+                $.get(form.attr("action"), function (data) {
+                    var modalBody = modal.find(".modal-body");
+                    modalBody.html("");
+                    modalBody.html(data);
+
+                    var form = modal.closest("form");
+                    $.validator.unobtrusive.parse(form);
+
+                    $(".reveal").on('click', function () {
+                        var $pwd = $(".pwd");
+                        if ($pwd.attr('type') === 'password') {
+                            $pwd.attr('type', 'text');
+                        } else {
+                            $pwd.attr('type', 'password');
+                        }
+                    });
                 });
             });
-        });
 
-        createConfirmationDialog("modalEditUser", "@Url.Action("Edit")", "Update user", "Update",token, function (event) {
-            var button = $(event.relatedTarget);
-            var email = button.data('email');
-            var modal = $(this);
-            var form = modal.closest("form");
-
-            $.get(form.attr("action"), { email: email }, function (data) {
-                var modalBody = modal.find(".modal-body");
-                modalBody.html("");
-                modalBody.html(data);
-
+            $.createConfirmationDialog("modalEditUser", "@Url.Action("Edit")", "Update user", "Update", token, function (event) {
+                var button = $(event.relatedTarget);
+                var email = button.data('email');
+                var modal = $(this);
                 var form = modal.closest("form");
-                $.validator.unobtrusive.parse(form);
 
-                $(".reveal").on('click', function () {
-                    var $pwd = $(".pwd");
-                    if ($pwd.attr('type') === 'password') {
-                        $pwd.attr('type', 'text');
-                    } else {
-                        $pwd.attr('type', 'password');
-                    }
+                $.get(form.attr("action"), { email: email }, function (data) {
+                    var modalBody = modal.find(".modal-body");
+                    modalBody.html("");
+                    modalBody.html(data);
+
+                    var form = modal.closest("form");
+                    $.validator.unobtrusive.parse(form);
+
+                    $(".reveal").on('click', function () {
+                        var $pwd = $(".pwd");
+                        if ($pwd.attr('type') === 'password') {
+                            $pwd.attr('type', 'text');
+                        } else {
+                            $pwd.attr('type', 'password');
+                        }
+                    });
                 });
             });
-        });
 
-        createConfirmationDialog("modalLock", "@Url.Action("Lock")", "Lock user", "Lock", token, function (event) {
-            var button = $(event.relatedTarget);
-            var email = button.data('email');
-            var modal = $(this);
-            var form = modal.closest("form");
+            $.createConfirmationDialog("modalLock", "@Url.Action("Lock")", "Lock user", "Lock", token, function (event) {
+                var button = $(event.relatedTarget);
+                var email = button.data('email');
+                var modal = $(this);
+                var form = modal.closest("form");
 
-            form.find(".modal-body").html('<input type="hidden" name="Email" value="' + email + '"/>Are you sure to take this action ?');
-        });
+                form.find(".modal-body").html('<input type="hidden" name="Email" value="' + email + '"/>Are you sure to take this action ?');
+            });
 
-        createConfirmationDialog("modalUnLock", "@Url.Action("UnLock")", "UnLock user", "UnLock", token, function (event) {
-            var button = $(event.relatedTarget);
-            var email = button.data('email');
-            var modal = $(this);
-            var form = modal.closest("form");
+            $.createConfirmationDialog("modalUnLock", "@Url.Action("UnLock")", "UnLock user", "UnLock", token, function (event) {
+                var button = $(event.relatedTarget);
+                var email = button.data('email');
+                var modal = $(this);
+                var form = modal.closest("form");
 
-            form.find(".modal-body").html('<input type="hidden" name="Email" value="' + email + '"/>Are you sure to take this action ?');
-        });
-
-        var spinnerHtml = "<i class='fa fa-spinner fa-spin' style='font-size: 24px'></i>";
-        //$('#modalEditUser').on('show.bs.modal', function (event) {
-        //    var button = $(event.relatedTarget);
-        //    var email = button.data('email');
-        //    var modal = $(this);
-        //    var form = modal.closest("form");
-
-        //    $.get(form.attr("action"), { email: email }, function (data) {
-        //        $("#modalEditUser .modal-body").html(data);
-
-        //        var form = $("#modalEditUser").closest("form");
-        //        $.validator.unobtrusive.parse(form);
-
-        //        $(".reveal").on('click', function () {
-        //            var $pwd = $(".pwd");
-        //            if ($pwd.attr('type') === 'password') {
-        //                $pwd.attr('type', 'text');
-        //            } else {
-        //                $pwd.attr('type', 'password');
-        //            }
-        //        });
-        //    });
-        //});
-        //$('#modalEditUser').on('hidden.bs.modal', function () {
-        //    var modal = $(this);
-        //    var form = modal.closest("form");
-
-        //    form.find(".modal-body").html(spinnerHtml);
-        //})
-
-        //$("#modalAddUser").on('show.bs.modal', function (e) {
-        //    var modal = $(this);
-        //    var form = modal.closest("form");
-
-        //    $.get(form.attr("action"), function (data) {
-        //        $("#modalAddUser .modal-body").html(data);
-
-        //        var form = $("#modalAddUser").closest("form");
-        //        $.validator.unobtrusive.parse(form);
-
-        //        $(".reveal").on('click', function () {
-        //            var $pwd = $(".pwd");
-        //            if ($pwd.attr('type') === 'password') {
-        //                $pwd.attr('type', 'text');
-        //            } else {
-        //                $pwd.attr('type', 'password');
-        //            }
-        //        });
-        //    });
-
-
-        //    //clear modal state if any
-        //    //$('.field-validation-error,.validation-summary-errors').text('')
-        //});
-        //$('#modalAddUser').on('hidden.bs.modal', function () {
-        //    var modal = $(this);
-        //    var form = modal.closest("form");
-
-        //    form.find(".modal-body").html(spinnerHtml);
-        //})
-
-        //$('#modalLock,#modalUnLock').on('show.bs.modal', function (event) {
-        //    var button = $(event.relatedTarget);
-        //    var email = button.data('email');
-        //    var modal = $(this);
-        //    var form = modal.closest("form");
-
-        //    form.find(".modal-body input[type=hidden]").val(email);
-        //});
+                form.find(".modal-body").html('<input type="hidden" name="Email" value="' + email + '"/>Are you sure to take this action ?');
+            });
+        })();
     </script>
 }

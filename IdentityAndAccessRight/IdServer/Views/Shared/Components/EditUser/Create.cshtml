@@ -29,7 +29,7 @@
             <input type="checkbox" asp-for="@Model.Roles[i].Checked" />
             <input type="hidden" asp-for="@Model.Roles[i].Text" />
             <input type="hidden" asp-for="@Model.Roles[i].Value" />
-            <label asp-for="@Model.Roles[i].Checked">@Model.Roles[i].Text</label>
+            <label asp-for="@Model.Roles[i].Checked"  class="mr10" >@Model.Roles[i].Text</label>
         }
     </div>
 </div>
@@ -41,7 +41,7 @@
             <input type="checkbox" asp-for="@Model.Claims[i].Checked" />
             <input type="hidden" asp-for="@Model.Claims[i].Text" />
             <input type="hidden" asp-for="@Model.Claims[i].Value" />
-            <label asp-for="@Model.Claims[i].Checked">@Model.Claims[i].Text</label>
+            <label asp-for="@Model.Claims[i].Checked" class="mr10" >@Model.Claims[i].Text</label>
         }
     </div>
 </div>

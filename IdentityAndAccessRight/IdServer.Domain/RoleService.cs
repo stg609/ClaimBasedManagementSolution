@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.Domain;
 using Constants;
 using Microsoft.AspNetCore.Identity;
 
@@ -40,13 +41,10 @@ namespace IdServer.Domain
                 if (claims != null && claims.Any())
                 {
                     var role = await _roleManager.FindByNameAsync(name);
-                    foreach (var claim in claims)
+                    result = await _roleManager.AddClaimAsync(role, claims.GetPermissionClaims());
+                    if (!result.Succeeded)
                     {
-                        result = await _roleManager.AddClaimAsync(role, new Claim(ClaimConstants.PermissionClaimType, claim));
-                        if (!result.Succeeded)
-                        {
-                            throw new Exception(GetIdentityErrorMessage(result.Errors));
-                        }
+                        throw new Exception(GetIdentityErrorMessage(result.Errors));
                     }
                 }
             }
@@ -68,29 +66,20 @@ namespace IdServer.Domain
 
             claims = claims ?? new List<string>(); //ensure it's not null
 
-            var toDeleteItems = from itm in currentClaims.Except(claims)
-                                select new Claim(ClaimConstants.PermissionClaimType, itm);
-            var toAddItems = from itm in claims.Except(currentClaims)
-                             select new Claim(ClaimConstants.PermissionClaimType, itm);
-
-            //remove claims
-            foreach (var itm in toDeleteItems)
+            var permssionClaims = (await _roleManager.GetClaimsAsync(role)).SingleOrDefault(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType));
+            if (permssionClaims != null)
             {
-                result = await _roleManager.RemoveClaimAsync(role, itm);
+                result = await _roleManager.RemoveClaimAsync(role, permssionClaims);
                 if (!result.Succeeded)
                 {
                     throw new Exception(GetIdentityErrorMessage(result.Errors));
                 }
             }
 
-            //add claims
-            foreach (var claim in toAddItems)
+            result = await _roleManager.AddClaimAsync(role, claims.GetPermissionClaims());
+            if (!result.Succeeded)
             {
-                result = await _roleManager.AddClaimAsync(role, claim);
-                if (!result.Succeeded)
-                {
-                    throw new Exception(GetIdentityErrorMessage(result.Errors));
-                }
+                throw new Exception(GetIdentityErrorMessage(result.Errors));
             }
         }
     }

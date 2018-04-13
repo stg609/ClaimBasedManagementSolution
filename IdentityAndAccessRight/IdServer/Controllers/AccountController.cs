@@ -69,6 +69,10 @@ namespace IdServer.Controllers
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+
+                //var user = await _userManager.FindByEmailAsync(model.Email);
+                ////var claims = await _userManager.GetClaimsAsync(user);
+                //var re = await _userManager.AddClaimAsync(user, new Claim("preferred_username", "test"));
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");

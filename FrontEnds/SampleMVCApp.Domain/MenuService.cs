@@ -286,7 +286,7 @@ namespace SampleMVCApp.Domain
             var requiredClaimsArr = requiredClaims.Split(GeneralConstants.DelimeterSemicolon);
             foreach (var claim in requiredClaimsArr)
             {
-                if (!userClaims.HasClaim(ClaimConstants.PermissionClaimType, claim))
+                if (!userClaims.HasPermissionClaim(claim))
                 {
                     return false;
                 }

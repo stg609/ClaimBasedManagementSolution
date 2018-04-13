@@ -4,13 +4,13 @@ namespace Common.Infra
 {
     public class ClaimRequirement : IAuthorizationRequirement
     {
-        public ClaimRequirement(string type, string value)
+        public ClaimRequirement(/*string type,*/ string value)
         {
-            Type = type;
+            //Type = type;
             Value = value;
         }
 
-        public string Type { get; set; }
+        //public string Type { get; set; }
         public string Value { get; set; }
     }
 }

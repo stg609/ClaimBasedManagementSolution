@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Common.Domain
@@ -8,7 +9,7 @@ namespace Common.Domain
          where TEntity : class
     {
         TEntity Get(Expression<Func<TEntity, bool>> predicate);
-        IEnumerable<TEntity> GetAll();
+        IQueryable<TEntity> GetAll();
 
         void Add(TEntity entity);
         void AddRange(IEnumerable<TEntity> entities);

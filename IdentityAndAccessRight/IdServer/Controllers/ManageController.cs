@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Constants;
 using IdServer.Domain;
 using IdServer.Models.ManageViewModels;
 using IdServer.Services;
@@ -101,7 +103,7 @@ namespace IdServer.Controllers
                 }
             }
 
-            if(String.IsNullOrWhiteSpace(model.Nickname))
+            if(!String.IsNullOrWhiteSpace(model.Nickname))
             {
                 user.Nickname = model.Nickname;
                 var result = await _userManager.UpdateAsync(user);
@@ -109,6 +111,24 @@ namespace IdServer.Controllers
                 {
                     throw new ApplicationException($"Unexpected error occurred '{user.Id}'.");
                 }
+
+                //使用下面方式更新 name claim，但是一方面这个只有 manage 时候才有用，另一方面由于 name 是个通用的 claim，所以可能会有副作用。因此暂时通过在 razor 页面直接获取 nickname 来实现。
+                //var claims = await _userManager.GetClaimsAsync(user);
+                //var nameClaim = claims.SingleOrDefault(itm => itm.Type.Equals(ClaimConstants.ASPNETIDENTITY_NAME));
+                //if(nameClaim != null)
+                //{
+                //    result = await _userManager.RemoveClaimAsync(user, nameClaim);
+                //    if (!result.Succeeded)
+                //    {
+                //        throw new ApplicationException($"Unexpected error occurred '{user.Id}'.");
+                //    }
+                //}
+
+                //result = await _userManager.AddClaimAsync(user, new Claim(ClaimConstants.ASPNETIDENTITY_NAME, model.Nickname));
+                //if (!result.Succeeded)
+                //{
+                //    throw new ApplicationException($"Unexpected error occurred '{user.Id}'.");
+                //}
             }
 
             StatusMessage = "Your profile has been updated";

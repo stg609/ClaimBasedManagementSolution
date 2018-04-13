@@ -15,21 +15,6 @@ namespace Common.Infra
 {
     public static class ClaimsAnalyzer
     {
-        public static bool HasClaim(this IEnumerable<Claim> claims, string targetClaimType, string targetClaimValue)
-        {
-            if (claims.Any(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType) && itm.Value.Equals(String.Join(".", ClaimConstants.PolicyPrefix, ClaimConstants.ClaimValue_AllowAll))))
-            {
-                return true;
-            }
-
-            if (!claims.Any(itm => itm.Type.Equals(targetClaimType) && itm.Value.Equals(targetClaimValue)))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
         public static List<MethodInfo> GetControllerActionList(Assembly assembly)
         {
             //得到所有 actions of Controller (no matter it is Api Controller or Mvc Controller)
@@ -53,7 +38,7 @@ namespace Common.Infra
             {
                 return new List<Claim>();
             }
-            
+
             List<Claim> results = new List<Claim>();
 
             var controlleractionlist = GetControllerActionList(assembly);
@@ -157,4 +142,4 @@ namespace Common.Infra
         }
     }
 }
- 
+

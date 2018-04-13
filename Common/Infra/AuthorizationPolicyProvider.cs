@@ -28,7 +28,7 @@ namespace Common.Infra
                 if (match.Success)
                 {                   
                     policy = new AuthorizationPolicyBuilder()
-                        .AddRequirements(new ClaimRequirement(ClaimConstants.PermissionClaimType, match.Groups[0].Value))
+                        .AddRequirements(new ClaimRequirement(/*ClaimConstants.PermissionClaimType,*/ match.Groups[0].Value))
                         .Build();
                 }
             }

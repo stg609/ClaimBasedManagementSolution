@@ -1,4 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Constants;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleMVCApp.Models;
 
@@ -18,11 +24,27 @@ namespace SampleMVCApp.Controllers
             return View();
         }
 
+        [Authorize(Policy = ClaimConstants.PolicyPrefix + "." + Services.Constants.Identity + ".action.contact")]
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
 
             return View();
+        }
+
+        /// <summary>
+        /// 测试访问 API
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Policy = ClaimConstants.PolicyPrefix + "." + Services.Constants.Identity + ".action.testApi")]
+        public async Task<IActionResult> TestAPI()
+        {
+            var accessToken = await HttpContext.GetTokenAsync("access_token");
+
+            var client = new HttpClient();
+            client.SetBearerToken(accessToken);
+            var content = await client.GetStringAsync("http://localhost:5001/api/values/" + DateTime.Now.Second);
+            return Content(content);
         }
 
         public IActionResult Error()

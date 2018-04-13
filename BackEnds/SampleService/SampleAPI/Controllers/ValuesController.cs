@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +20,10 @@ namespace SampleAPI.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
+        [Authorize("Bearer", Policy = ClaimConstants.PolicyPrefix + "." + Services.Constants.IDENTITY + ".api.GetValueById")]
         public string Get(int id)
         {
-            return "value";
+            return "value" + id;
         }
 
         // POST api/values

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Common.Domain;
 using Common.FrontEnd;
 using Common.Infra;
 using Constants;
@@ -112,7 +113,7 @@ namespace IdServer.Controllers
                 Nickname = user.Nickname,
                 Email = user.Email,
                 Roles = GetRolesCheckboxViewModel(_userManager.GetRolesAsync(user).Result.ToList()),
-                Claims = GetClaimsCheckboxViewModel(_userManager.GetClaimsAsync(user).Result.Where(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType)).ToList())
+                Claims = GetClaimsCheckboxViewModel(_userManager.GetClaimsAsync(user).Result.SingleOrDefault(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType)))
             });
         }
 
@@ -190,7 +191,7 @@ namespace IdServer.Controllers
                               Nickname = user.Nickname,
                               Locked = IsLocked(user),
                               Roles = _userManager.GetRolesAsync(user).Result.ToList(),
-                              Claims = _userManager.GetClaimsAsync(user).Result.Where(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType)).Select(itm => itm.Value).ToList()
+                              Claims = _userManager.GetClaimsAsync(user).Result.SingleOrDefault(itm => itm.Type.Equals(ClaimConstants.PermissionClaimType))?.Value.Split(GeneralConstants.DelimeterSemicolon).ToList()
                           };
             return userVMs.EmptyListIfEmpty();
         }
@@ -216,12 +217,12 @@ namespace IdServer.Controllers
                     }).ToList();
         }
 
-        private List<CheckboxViewModel> GetClaimsCheckboxViewModel(IEnumerable<Claim> currentClaims = null)
+        private List<CheckboxViewModel> GetClaimsCheckboxViewModel(Claim permissionClaims = null)
         {
             return (from itm in _claimService.GetAllClaims()
                     select new CheckboxViewModel
                     {
-                        Checked = (currentClaims ?? new Claim[] { }).Any(currentClaim => currentClaim.Type.Equals(itm.Type) && currentClaim.Value.Equals(itm.Value)),
+                        Checked = permissionClaims.HasPermissionClaim(itm.Value),
                         Value = itm.Value,
                         Text = itm.Value
                     })?.ToList();

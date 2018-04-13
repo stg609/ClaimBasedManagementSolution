@@ -40,7 +40,7 @@ namespace IdServer.Infra
             var adminRole = await _roleManager.FindByNameAsync(adminRoleName);
 
             string superClaim = String.Join(GeneralConstants.DelimeterDot, ClaimConstants.PolicyPrefix, ClaimConstants.ClaimValue_AllowAll);
-            _claimService.AddClaim(new ClaimDTO
+            _claimService.AddOrUpdateClaim(new ClaimDTO
             {
                 Type = ClaimConstants.PermissionClaimType,
                 Value = superClaim

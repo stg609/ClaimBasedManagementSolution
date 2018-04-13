@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Constants;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
 using IdentityServer4.Services;
@@ -34,7 +35,16 @@ namespace IdServer.Services
 
             var principal = await _claimsFactory.CreateAsync(user);
             var claims = principal.Claims.ToList();
-            claims.Add(new Claim(ClaimTypes.Name, user.Nickname));
+            claims.Add(new Claim(ClaimConstants.NicknameClaimType, user.Nickname));
+
+            //use ; join same permission claim type if existed
+            Func<Claim, bool> predicate = itm => itm.Type.Equals(ClaimConstants.PermissionClaimType);
+            if (claims.Count(predicate) > 1)
+            {
+                string jointPermissionClaims = String.Join(GeneralConstants.DelimeterSemicolon, claims.Where(predicate).Select(itm => itm.Value));
+                claims.RemoveAll(new Predicate<Claim>(predicate));
+                claims.Add(new Claim(ClaimConstants.PermissionClaimType, jointPermissionClaims));
+            }
 
             context.IssuedClaims = claims;
         }

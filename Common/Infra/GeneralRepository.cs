@@ -27,9 +27,9 @@ namespace Common.Infra
             _unitOfWork.Context.Set<TEntity>().AddRange(entities);
         }    
 
-        public IEnumerable<TEntity> GetAll()
+        public IQueryable<TEntity> GetAll()
         {
-            return _unitOfWork.Context.Set<TEntity>().AsEnumerable<TEntity>();
+            return _unitOfWork.Context.Set<TEntity>();
         }
 
         public TEntity Get(Expression<Func<TEntity, bool>> predicate)
